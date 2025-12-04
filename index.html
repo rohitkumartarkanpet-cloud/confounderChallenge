@@ -50,13 +50,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#story-setup-two-surgeons-very-different-looks" id="toc-story-setup-two-surgeons-very-different-looks" class="nav-link active" data-scroll-target="#story-setup-two-surgeons-very-different-looks"><span class="header-section-number">1</span> Story Setup: Two Surgeons, Very Different Looks</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
   <li><a href="#data-and-notation" id="toc-data-and-notation" class="nav-link" data-scroll-target="#data-and-notation"><span class="header-section-number">2</span> Data and Notation</a></li>
-  <li><a href="#observational-data-first-impression-favors-doc-dreamy" id="toc-observational-data-first-impression-favors-doc-dreamy" class="nav-link" data-scroll-target="#observational-data-first-impression-favors-doc-dreamy"><span class="header-section-number">3</span> Observational Data: First Impression Favors Doc Dreamy</a></li>
-  <li><a href="#the-hidden-variable-severity-as-a-common-cause" id="toc-the-hidden-variable-severity-as-a-common-cause" class="nav-link" data-scroll-target="#the-hidden-variable-severity-as-a-common-cause"><span class="header-section-number">4</span> The Hidden Variable: Severity as a Common Cause</a></li>
-  <li><a href="#breaking-the-link-randomized-assignment" id="toc-breaking-the-link-randomized-assignment" class="nav-link" data-scroll-target="#breaking-the-link-randomized-assignment"><span class="header-section-number">5</span> Breaking the Link: Randomized Assignment</a></li>
-  <li><a href="#when-randomization-is-not-possible-stratification-by-severity" id="toc-when-randomization-is-not-possible-stratification-by-severity" class="nav-link" data-scroll-target="#when-randomization-is-not-possible-stratification-by-severity"><span class="header-section-number">6</span> When Randomization Is Not Possible: Stratification by Severity</a></li>
-  <li><a href="#main-lessons" id="toc-main-lessons" class="nav-link" data-scroll-target="#main-lessons"><span class="header-section-number">7</span> Main Lessons</a></li>
+  <li><a href="#observational-data-a-first-misleading-impression" id="toc-observational-data-a-first-misleading-impression" class="nav-link" data-scroll-target="#observational-data-a-first-misleading-impression"><span class="header-section-number">3</span> Observational Data: A First, Misleading Impression</a></li>
+  <li><a href="#severity-as-a-common-cause-confounder" id="toc-severity-as-a-common-cause-confounder" class="nav-link" data-scroll-target="#severity-as-a-common-cause-confounder"><span class="header-section-number">4</span> Severity as a Common-Cause Confounder</a></li>
+  <li><a href="#randomized-assignment-breaking-the-confounding-path" id="toc-randomized-assignment-breaking-the-confounding-path" class="nav-link" data-scroll-target="#randomized-assignment-breaking-the-confounding-path"><span class="header-section-number">5</span> Randomized Assignment: Breaking the Confounding Path</a></li>
+  <li><a href="#stratification-by-severity-when-randomization-is-not-available" id="toc-stratification-by-severity-when-randomization-is-not-available" class="nav-link" data-scroll-target="#stratification-by-severity-when-randomization-is-not-available"><span class="header-section-number">6</span> Stratification by Severity: When Randomization Is Not Available</a></li>
+  <li><a href="#discussion-and-main-lessons" id="toc-discussion-and-main-lessons" class="nav-link" data-scroll-target="#discussion-and-main-lessons"><span class="header-section-number">7</span> Discussion and Main Lessons</a></li>
   </ul>
 </nav>
 </div>
@@ -65,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Using Randomization &amp; Stratification to Overcome a Common Cause Confounder</h1>
-<p class="subtitle lead">Doc Dreamy vs Doc Duck</p>
+<p class="subtitle lead">Comparing Surgical Outcomes for Doc Dreamy and Doc Duck</p>
 </div>
 
 
@@ -88,38 +88,35 @@ ul.task-list li input[type="checkbox"] {
   height: auto;
 }
 </style>
-<section id="story-setup-two-surgeons-very-different-looks" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="story-setup-two-surgeons-very-different-looks"><span class="header-section-number">1</span> Story Setup: Two Surgeons, Very Different Looks</h2>
-<div style="float: right; margin-left: 15px; margin-bottom: 10px;">
-<p><img src="docSideBySide.jpg" alt="Doc Dreamy and Doc Duck side by side" style="max-width: 220px; height: auto; border-radius: 5px;"></p>
-</div>
-<p>Imagine you need surgery and you can choose between two surgeons at the same hospital.</p>
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>Clinical data often look convincing at first glance. A simple comparison of averages can make one treatment or clinician appear superior. However, when treatment choice is related to patient characteristics, those same averages can be badly misleading.</p>
+<p>In this report, we study outcomes for two surgeons working at the same hospital:</p>
 <ul>
-<li><strong>Doc Dreamy</strong> looks exactly how people expect a surgeon to look. Calm, polished, nice office, diplomas on the wall.</li>
-<li><strong>Doc Duck</strong> looks rough. Bigger build, messy office, and not much on the walls.</li>
+<li><strong>Doc Dreamy</strong>, who fits the stereotypical image of a highly polished specialist.</li>
+<li><strong>Doc Duck</strong>, whose appearance and style may not match common expectations.</li>
 </ul>
-<p>Most people would feel safer picking Doc Dreamy. But looks can hide what is really going on in the data. Here we walk through data for these two doctors and see how a hidden factor can flip the story.</p>
+<p>We use observational data, randomized data, and stratification by baseline severity to show how a common-cause confounder can reverse the apparent ranking of these two surgeons. Randomization and stratification are then used to recover a more credible causal story.</p>
 </section>
 <section id="data-and-notation" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="data-and-notation"><span class="header-section-number">2</span> Data and Notation</h2>
 <p>We work with two data sets:</p>
 <ul>
-<li><strong>Observational data</strong>: patients picked their surgeon based on real-world factors like looks, waiting time, and personal preference.</li>
-<li><strong>Randomized data</strong>: patients were assigned to surgeons by something like a coin flip.</li>
+<li><strong>Observational data</strong>: patients selected their surgeon under usual care (driven by preferences, urgency, appearance, scheduling, and so on).</li>
+<li><strong>Randomized data</strong>: patients were assigned to a surgeon using a random mechanism, independent of patient characteristics.</li>
 </ul>
-<p>The main outcome is:</p>
+<p>For each patient, we observe:</p>
 <ul>
-<li><code>post_surgical_score</code> – symptom score after surgery (lower values mean better recovery).</li>
-</ul>
-<p>We also have:</p>
-<ul>
-<li><code>severity</code> – how serious the case was before surgery.</li>
+<li><code>severity</code> – baseline symptom severity before surgery.</li>
 <li><code>doctor_name</code> – <code>"Doc Dreamy"</code> or <code>"Doc Duck"</code>.</li>
+<li><code>post_surgical_score</code> – symptom score after surgery<br>
+(lower values indicate better outcomes).</li>
 </ul>
+<p>Throughout, the goal is not only to describe these data, but to understand <strong>how much of the observed difference in outcomes can be attributed to the choice of surgeon</strong>, rather than to differences in the types of patients they treat.</p>
 </section>
-<section id="observational-data-first-impression-favors-doc-dreamy" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="observational-data-first-impression-favors-doc-dreamy"><span class="header-section-number">3</span> Observational Data: First Impression Favors Doc Dreamy</h2>
-<p>In the observational data, patients did not get assigned randomly. They chose a surgeon based on what they saw and how urgent they felt their case was.</p>
+<section id="observational-data-a-first-misleading-impression" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="observational-data-a-first-misleading-impression"><span class="header-section-number">3</span> Observational Data: A First, Misleading Impression</h2>
+<p>In the observational dataset, patients did not receive surgeons at random. They chose, or were scheduled with, a surgeon based on real-world factors such as availability, perceived skill, and appearance. As a result, baseline severity can be imbalanced between the two surgeons.</p>
 <section id="summary-of-observational-outcomes" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="summary-of-observational-outcomes"><span class="header-section-number">3.1</span> Summary of Observational Outcomes</h3>
 <div class="cell" data-execution_count="2">
@@ -131,56 +128,56 @@ Table&nbsp;1
 <div aria-describedby="tbl-observational-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <style type="text/css">
-#T_62af9 th {
+#T_947bb th {
   background-color: #111827;
   color: white;
   padding: 8px;
 }
-#T_62af9 td {
+#T_947bb td {
   padding: 6px;
 }
-#T_62af9_row0_col0, #T_62af9_row0_col1, #T_62af9_row0_col3, #T_62af9_row0_col4, #T_62af9_row1_col0, #T_62af9_row1_col1, #T_62af9_row1_col3, #T_62af9_row1_col4 {
+#T_947bb_row0_col0, #T_947bb_row0_col1, #T_947bb_row0_col3, #T_947bb_row0_col4, #T_947bb_row1_col0, #T_947bb_row1_col1, #T_947bb_row1_col3, #T_947bb_row1_col4 {
   text-align: center;
 }
-#T_62af9_row0_col2 {
+#T_947bb_row0_col2 {
   text-align: center;
   background-color: #0d0887;
   color: #f1f1f1;
 }
-#T_62af9_row1_col2 {
+#T_947bb_row1_col2 {
   text-align: center;
   background-color: #f0f921;
   color: #000000;
 }
 </style>
 
-<table id="T_62af9" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
+<table id="T_947bb" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_62af9_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
-<th id="T_62af9_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
-<th id="T_62af9_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
-<th id="T_62af9_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
-<th id="T_62af9_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
+<th id="T_947bb_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
+<th id="T_947bb_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
+<th id="T_947bb_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
+<th id="T_947bb_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
+<th id="T_947bb_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th id="T_62af9_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
-<td id="T_62af9_row0_col0" class="data row0 col0">Doc Dreamy</td>
-<td id="T_62af9_row0_col1" class="data row0 col1">54</td>
-<td id="T_62af9_row0_col2" class="data row0 col2">2.80</td>
-<td id="T_62af9_row0_col3" class="data row0 col3">1.18</td>
-<td id="T_62af9_row0_col4" class="data row0 col4">-0.67</td>
+<th id="T_947bb_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_947bb_row0_col0" class="data row0 col0">Doc Dreamy</td>
+<td id="T_947bb_row0_col1" class="data row0 col1">54</td>
+<td id="T_947bb_row0_col2" class="data row0 col2">2.80</td>
+<td id="T_947bb_row0_col3" class="data row0 col3">1.18</td>
+<td id="T_947bb_row0_col4" class="data row0 col4">-0.67</td>
 </tr>
 <tr class="even">
-<th id="T_62af9_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
-<td id="T_62af9_row1_col0" class="data row1 col0">Doc Duck</td>
-<td id="T_62af9_row1_col1" class="data row1 col1">46</td>
-<td id="T_62af9_row1_col2" class="data row1 col2">3.38</td>
-<td id="T_62af9_row1_col3" class="data row1 col3">1.33</td>
-<td id="T_62af9_row1_col4" class="data row1 col4">0.85</td>
+<th id="T_947bb_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_947bb_row1_col0" class="data row1 col0">Doc Duck</td>
+<td id="T_947bb_row1_col1" class="data row1 col1">46</td>
+<td id="T_947bb_row1_col2" class="data row1 col2">3.38</td>
+<td id="T_947bb_row1_col3" class="data row1 col3">1.33</td>
+<td id="T_947bb_row1_col4" class="data row1 col4">0.85</td>
 </tr>
 </tbody>
 </table>
@@ -189,10 +186,10 @@ Table&nbsp;1
 </figure>
 </div>
 </div>
-<p>In this setting, Doc Dreamy has the lower average post-surgical score, so at first glance it looks like he is doing better. But this conclusion is based on raw averages only.</p>
+<p>In the observational data, Doc Dreamy has a lower average post-surgical symptom score than Doc Duck. If one simply compares these averages, Doc Dreamy appears to be the better surgeon. However, the same summary also shows that Doc Dreamy tends to treat less severe cases on average, while Doc Duck treats more severe cases. This raises the possibility that the apparent advantage for Doc Dreamy is driven by differences in the patients, not differences in skill.</p>
 </section>
 <section id="figure-1-observational-outcomes-by-patient" class="level3" data-number="3.2">
-<h3 data-number="3.2" class="anchored" data-anchor-id="figure-1-observational-outcomes-by-patient"><span class="header-section-number">3.2</span> Figure 1 – Observational Outcomes by Patient</h3>
+<h3 data-number="3.2" class="anchored" data-anchor-id="figure-1-observational-outcomes-by-patient"><span class="header-section-number">3.2</span> Figure&nbsp;1 – Observational Outcomes by Patient</h3>
 <div id="cell-fig-observational" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div id="fig-observational" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
@@ -201,49 +198,53 @@ Table&nbsp;1
 <img src="index_files/figure-html/fig-observational-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="644" height="373">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-observational-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Observed post-surgical symptom scores for each patient by surgeon.
+Figure&nbsp;1: Observed post-surgical symptom scores for each patient, by surgeon.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Looking only at this figure and the earlier summary, the obvious answer is:</p>
-<blockquote class="blockquote">
-<p>Doc Dreamy looks better in the observational data because his patients have lower scores on average.</p>
-</blockquote>
-<p>But this ignores how patients ended up with each surgeon.</p>
+<p>Figure&nbsp;1 reinforces the first impression from the table: the horizontal mean line for Doc Dreamy lies below the mean line for Doc Duck, suggesting better outcomes for Doc Dreamy when we look only at aggregate observational data.</p>
+<p>From a causal perspective, however, this is an incomplete story. We still need to understand <strong>why</strong> patients ended up with each surgeon in the first place.</p>
 </section>
 </section>
-<section id="the-hidden-variable-severity-as-a-common-cause" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="the-hidden-variable-severity-as-a-common-cause"><span class="header-section-number">4</span> The Hidden Variable: Severity as a Common Cause</h2>
-<p>A directed graph (DAG) helps to keep the story straight.</p>
+<section id="severity-as-a-common-cause-confounder" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="severity-as-a-common-cause-confounder"><span class="header-section-number">4</span> Severity as a Common-Cause Confounder</h2>
+<p>A useful way to structure this problem is through directed acyclic graphs (DAGs). A simple mental model is shown in Figure&nbsp;2.</p>
 <div id="fig-example-node" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-example-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="dag-example-node.png" class="img-fluid figure-img" style="width:55.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: First mental model: surgeon directly affects outcome.
+Figure&nbsp;2: Simple model: surgeon directly affects outcome.
 </figcaption>
 </figure>
 </div>
-<p>If we believe this drawing, we might think that the surgeon is the main reason for the outcome differences. But suppose severity affects both who the patient chooses and how they recover.</p>
+<p>In this initial picture, surgeon identity directly affects the post-surgical outcome. If we believe this model and take the observational difference in mean symptom scores at face value, we might conclude that Doc Dreamy is genuinely better.</p>
+<p>However, suppose baseline severity influences both <strong>which surgeon a patient sees</strong> and <strong>how well that patient recovers</strong>. In that case, severity becomes a common-cause confounder, as illustrated in Figure&nbsp;3.</p>
 <div id="fig-example2-node" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-example2-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="dag-example2-node.png" class="img-fluid figure-img" style="width:55.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example2-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Alternate model: severity influences both surgeon choice and outcome.
+Figure&nbsp;3: Common-cause model: severity influences both surgeon choice and outcome.
 </figcaption>
 </figure>
 </div>
-<p>In this second drawing, severity is a common cause. Less severe cases may feel they can wait longer and go with the surgeon who looks more polished. More severe cases may just want the earliest available appointment, even if that means going to the surgeon who looks less polished.</p>
-<p>If severity pushes easier cases toward Doc Dreamy and tougher cases toward Doc Duck, the raw averages will be biased in favor of Doc Dreamy, even if Doc Duck is actually better at surgery.</p>
+<p>A plausible story is the following:</p>
+<ul>
+<li>Patients with <strong>milder symptoms</strong> may be willing to wait longer and may prefer the surgeon who appears more polished and reassuring (Doc Dreamy).</li>
+<li>Patients with <strong>more severe symptoms</strong> may be motivated to seek the earliest available surgery date, even if that means seeing a surgeon who does not fit the stereotypical image (Doc Duck).</li>
+</ul>
+<p>If this is true, then Doc Dreamy will systematically see easier cases and Doc Duck will systematically see harder cases. In this setting, the raw comparison of mean outcomes is biased in favor of Doc Dreamy, even if Doc Duck is actually the more skilled surgeon.</p>
+<p>To recover a credible causal comparison, we need a design that breaks the link between severity and surgeon choice, or a statistical strategy that accounts for severity directly.</p>
 </section>
-<section id="breaking-the-link-randomized-assignment" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="breaking-the-link-randomized-assignment"><span class="header-section-number">5</span> Breaking the Link: Randomized Assignment</h2>
-<p>One way to break the connection between severity and surgeon choice is to assign surgeons at random.</p>
+<section id="randomized-assignment-breaking-the-confounding-path" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="randomized-assignment-breaking-the-confounding-path"><span class="header-section-number">5</span> Randomized Assignment: Breaking the Confounding Path</h2>
+<p>Randomized experiments are designed to address precisely this type of problem. Under randomization, patients no longer choose their surgeon based on appearance, availability, or severity. Instead, a random mechanism (like a coin flip) assigns each patient to a surgeon, making surgeon identity independent of baseline severity.</p>
+<p>This design is summarized conceptually in Figure&nbsp;4.</p>
 <div id="fig-example3-node" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-example3-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -254,7 +255,7 @@ Figure&nbsp;4: Randomization breaks the link between severity and surgeon choice
 </figcaption>
 </figure>
 </div>
-<p>In the randomized data, surgeon assignment no longer depends on severity. This lets us see the effect of surgeon identity more directly.</p>
+<p>In this DAG, severity still affects the outcome, but it no longer affects surgeon choice. Randomization determines the surgeon, which allows us to interpret differences in outcomes as the causal effect of surgeon identity, up to random variation.</p>
 <section id="summary-of-randomized-outcomes" class="level3" data-number="5.1">
 <h3 data-number="5.1" class="anchored" data-anchor-id="summary-of-randomized-outcomes"><span class="header-section-number">5.1</span> Summary of Randomized Outcomes</h3>
 <div class="cell" data-execution_count="4">
@@ -266,56 +267,56 @@ Table&nbsp;2
 <div aria-describedby="tbl-randomized-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="4">
 <style type="text/css">
-#T_6371a th {
+#T_308ec th {
   background-color: #111827;
   color: white;
   padding: 8px;
 }
-#T_6371a td {
+#T_308ec td {
   padding: 6px;
 }
-#T_6371a_row0_col0, #T_6371a_row0_col1, #T_6371a_row0_col3, #T_6371a_row0_col4, #T_6371a_row1_col0, #T_6371a_row1_col1, #T_6371a_row1_col3, #T_6371a_row1_col4 {
+#T_308ec_row0_col0, #T_308ec_row0_col1, #T_308ec_row0_col3, #T_308ec_row0_col4, #T_308ec_row1_col0, #T_308ec_row1_col1, #T_308ec_row1_col3, #T_308ec_row1_col4 {
   text-align: center;
 }
-#T_6371a_row0_col2 {
+#T_308ec_row0_col2 {
   text-align: center;
   background-color: #f0f921;
   color: #000000;
 }
-#T_6371a_row1_col2 {
+#T_308ec_row1_col2 {
   text-align: center;
   background-color: #0d0887;
   color: #f1f1f1;
 }
 </style>
 
-<table id="T_6371a" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
+<table id="T_308ec" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_6371a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
-<th id="T_6371a_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
-<th id="T_6371a_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
-<th id="T_6371a_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
-<th id="T_6371a_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
+<th id="T_308ec_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
+<th id="T_308ec_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
+<th id="T_308ec_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
+<th id="T_308ec_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
+<th id="T_308ec_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th id="T_6371a_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
-<td id="T_6371a_row0_col0" class="data row0 col0">Doc Dreamy</td>
-<td id="T_6371a_row0_col1" class="data row0 col1">45</td>
-<td id="T_6371a_row0_col2" class="data row0 col2">3.46</td>
-<td id="T_6371a_row0_col3" class="data row0 col3">1.24</td>
-<td id="T_6371a_row0_col4" class="data row0 col4">0.04</td>
+<th id="T_308ec_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_308ec_row0_col0" class="data row0 col0">Doc Dreamy</td>
+<td id="T_308ec_row0_col1" class="data row0 col1">45</td>
+<td id="T_308ec_row0_col2" class="data row0 col2">3.46</td>
+<td id="T_308ec_row0_col3" class="data row0 col3">1.24</td>
+<td id="T_308ec_row0_col4" class="data row0 col4">0.04</td>
 </tr>
 <tr class="even">
-<th id="T_6371a_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
-<td id="T_6371a_row1_col0" class="data row1 col0">Doc Duck</td>
-<td id="T_6371a_row1_col1" class="data row1 col1">55</td>
-<td id="T_6371a_row1_col2" class="data row1 col2">2.71</td>
-<td id="T_6371a_row1_col3" class="data row1 col3">1.45</td>
-<td id="T_6371a_row1_col4" class="data row1 col4">0.23</td>
+<th id="T_308ec_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_308ec_row1_col0" class="data row1 col0">Doc Duck</td>
+<td id="T_308ec_row1_col1" class="data row1 col1">55</td>
+<td id="T_308ec_row1_col2" class="data row1 col2">2.71</td>
+<td id="T_308ec_row1_col3" class="data row1 col3">1.45</td>
+<td id="T_308ec_row1_col4" class="data row1 col4">0.23</td>
 </tr>
 </tbody>
 </table>
@@ -324,10 +325,15 @@ Table&nbsp;2
 </figure>
 </div>
 </div>
-<p>Here the story changes. The randomized summary shows which surgeon tends to have the better outcomes once the severity imbalance has been removed.</p>
+<p>The randomized summary reveals a very different pattern from the observational data. In this setting:</p>
+<ul>
+<li>Doc Duck has a <strong>lower average post-surgical score</strong> than Doc Dreamy.</li>
+<li>The average baseline severity is similar across the two surgeons, reflecting the fact that assignment was not driven by severity.</li>
+</ul>
+<p>Because surgeon identity is no longer entangled with baseline severity, this difference in mean outcomes is much closer to the causal effect of interest.</p>
 </section>
 <section id="figure-2-randomized-outcomes-by-patient" class="level3" data-number="5.2">
-<h3 data-number="5.2" class="anchored" data-anchor-id="figure-2-randomized-outcomes-by-patient"><span class="header-section-number">5.2</span> Figure 2 – Randomized Outcomes by Patient</h3>
+<h3 data-number="5.2" class="anchored" data-anchor-id="figure-2-randomized-outcomes-by-patient"><span class="header-section-number">5.2</span> Figure&nbsp;2 – Randomized Outcomes by Patient</h3>
 <div id="cell-fig-randomized" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div id="fig-randomized" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
@@ -342,37 +348,38 @@ Figure&nbsp;5: Post-surgical symptom scores under randomized surgeon assignment.
 </div>
 </div>
 </div>
-<p>In this figure, the average lines tell a different story than before. Once surgeon assignment is separated from severity, the advantage seen in the observational data can disappear or reverse.</p>
-<p>Randomization answers the question:</p>
+<p>In Figure&nbsp;2, the mean line for Doc Duck lies below the mean line for Doc Dreamy. With assignment randomized, this provides evidence that Doc Duck is the more effective surgeon on average, even though the observational data initially suggested the opposite.</p>
+<p>Randomization allows us to ask a clean question:</p>
 <blockquote class="blockquote">
-<p>If two groups of patients with similar severity are assigned to surgeons by chance, who does better on average?</p>
+<p><em>If two similar groups of patients are assigned to surgeons by chance, which surgeon tends to achieve better outcomes?</em></p>
 </blockquote>
+<p>In these data, the randomized comparison points to Doc Duck.</p>
 </section>
 </section>
-<section id="when-randomization-is-not-possible-stratification-by-severity" class="level2" data-number="6">
-<h2 data-number="6" class="anchored" data-anchor-id="when-randomization-is-not-possible-stratification-by-severity"><span class="header-section-number">6</span> When Randomization Is Not Possible: Stratification by Severity</h2>
-<p>In many real settings we cannot randomize who gets which treatment. A common plan in that case is to compare outcomes <strong>within bands of severity</strong> so that we are comparing people who started in roughly the same state.</p>
-<p>Here we look at initial severity on the x-axis and post-surgical score on the y-axis, using the observational data.</p>
-<section id="figure-3-outcomes-by-severity-stratified-view" class="level3" data-number="6.1">
-<h3 data-number="6.1" class="anchored" data-anchor-id="figure-3-outcomes-by-severity-stratified-view"><span class="header-section-number">6.1</span> Figure 3 – Outcomes by Severity (Stratified View)</h3>
+<section id="stratification-by-severity-when-randomization-is-not-available" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="stratification-by-severity-when-randomization-is-not-available"><span class="header-section-number">6</span> Stratification by Severity: When Randomization Is Not Available</h2>
+<p>Randomized experiments are powerful, but they are not always feasible. In many real-world settings, we must work with observational data only. In those cases, one common strategy is <strong>stratification</strong>: comparing outcomes within groups of patients who share similar values of the confounder.</p>
+<p>Here, the confounder is baseline severity. We therefore examine post-surgical scores as a function of initial severity, using the observational data.</p>
+<section id="figure-3-outcomes-by-baseline-severity" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="figure-3-outcomes-by-baseline-severity"><span class="header-section-number">6.1</span> Figure&nbsp;3 – Outcomes by Baseline Severity</h3>
 <div id="cell-fig-severity" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div id="fig-severity" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-severity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="index_files/figure-html/fig-severity-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="661" height="373">
+<img src="index_files/figure-html/fig-severity-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="669" height="373">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-severity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Post-surgical symptom scores versus initial severity, highlighting the region where both surgeons see many patients.
+Figure&nbsp;6: Post-surgical symptom scores versus baseline severity, highlighting the region where both surgeons treat many patients.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Inside the shaded band between -1 and 1 on the x-axis, both surgeons have a good number of patients. This is the best place to compare them fairly using the observational data.</p>
+<p>In Figure&nbsp;3, the horizontal axis represents baseline severity and the vertical axis represents post-surgical scores. The shaded band between –1 and 1 marks a region of <strong>overlap</strong>, where both surgeons treat a substantial number of patients with similar initial severity. Outside this band, Doc Duck tends to see more severe patients (higher severity values), while Doc Dreamy sees more mild cases (lower severity values).</p>
 </section>
-<section id="summary-inside-the-overlap-band" class="level3" data-number="6.2">
-<h3 data-number="6.2" class="anchored" data-anchor-id="summary-inside-the-overlap-band"><span class="header-section-number">6.2</span> Summary Inside the Overlap Band</h3>
+<section id="summary-within-the-overlap-band" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="summary-within-the-overlap-band"><span class="header-section-number">6.2</span> Summary Within the Overlap Band</h3>
 <div class="cell" data-execution_count="7">
 <div id="tbl-overlap-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -382,56 +389,56 @@ Table&nbsp;3
 <div aria-describedby="tbl-overlap-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="7">
 <style type="text/css">
-#T_b5dcf th {
+#T_66743 th {
   background-color: #111827;
   color: white;
   padding: 8px;
 }
-#T_b5dcf td {
+#T_66743 td {
   padding: 6px;
 }
-#T_b5dcf_row0_col0, #T_b5dcf_row0_col1, #T_b5dcf_row0_col3, #T_b5dcf_row0_col4, #T_b5dcf_row1_col0, #T_b5dcf_row1_col1, #T_b5dcf_row1_col3, #T_b5dcf_row1_col4 {
+#T_66743_row0_col0, #T_66743_row0_col1, #T_66743_row0_col3, #T_66743_row0_col4, #T_66743_row1_col0, #T_66743_row1_col1, #T_66743_row1_col3, #T_66743_row1_col4 {
   text-align: center;
 }
-#T_b5dcf_row0_col2 {
+#T_66743_row0_col2 {
   text-align: center;
   background-color: #f0f921;
   color: #000000;
 }
-#T_b5dcf_row1_col2 {
+#T_66743_row1_col2 {
   text-align: center;
   background-color: #0d0887;
   color: #f1f1f1;
 }
 </style>
 
-<table id="T_b5dcf" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
+<table id="T_66743" class="table table-striped table-bordered do-not-create-environment caption-top table-sm small">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_b5dcf_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
-<th id="T_b5dcf_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
-<th id="T_b5dcf_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
-<th id="T_b5dcf_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
-<th id="T_b5dcf_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
+<th id="T_66743_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">doctor_name</th>
+<th id="T_66743_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">n</th>
+<th id="T_66743_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">mean_score</th>
+<th id="T_66743_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">std_score</th>
+<th id="T_66743_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">mean_severity</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th id="T_b5dcf_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
-<td id="T_b5dcf_row0_col0" class="data row0 col0">Doc Dreamy</td>
-<td id="T_b5dcf_row0_col1" class="data row0 col1">35</td>
-<td id="T_b5dcf_row0_col2" class="data row0 col2">3.23</td>
-<td id="T_b5dcf_row0_col3" class="data row0 col3">1.01</td>
-<td id="T_b5dcf_row0_col4" class="data row0 col4">-0.30</td>
+<th id="T_66743_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_66743_row0_col0" class="data row0 col0">Doc Dreamy</td>
+<td id="T_66743_row0_col1" class="data row0 col1">35</td>
+<td id="T_66743_row0_col2" class="data row0 col2">3.23</td>
+<td id="T_66743_row0_col3" class="data row0 col3">1.01</td>
+<td id="T_66743_row0_col4" class="data row0 col4">-0.30</td>
 </tr>
 <tr class="even">
-<th id="T_b5dcf_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
-<td id="T_b5dcf_row1_col0" class="data row1 col0">Doc Duck</td>
-<td id="T_b5dcf_row1_col1" class="data row1 col1">21</td>
-<td id="T_b5dcf_row1_col2" class="data row1 col2">2.94</td>
-<td id="T_b5dcf_row1_col3" class="data row1 col3">1.13</td>
-<td id="T_b5dcf_row1_col4" class="data row1 col4">0.32</td>
+<th id="T_66743_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_66743_row1_col0" class="data row1 col0">Doc Duck</td>
+<td id="T_66743_row1_col1" class="data row1 col1">21</td>
+<td id="T_66743_row1_col2" class="data row1 col2">2.94</td>
+<td id="T_66743_row1_col3" class="data row1 col3">1.13</td>
+<td id="T_66743_row1_col4" class="data row1 col4">0.32</td>
 </tr>
 </tbody>
 </table>
@@ -440,23 +447,23 @@ Table&nbsp;3
 </figure>
 </div>
 </div>
-<p>Now the comparison is made for patients who started with similar severity. This reduces the bias from the common cause and gives a fairer comparison.</p>
-<p>Within this overlap band, Doc Duck often looks stronger than the raw overall averages suggest.</p>
+<p>The overlap summary focuses on patients whose baseline severity lies between –1 and 1, where the two surgeons are directly comparable. Within this band, the difference in average post-surgical scores is smaller than in the full observational sample, and Doc Duck often appears more competitive or even favorable relative to Doc Dreamy.</p>
+<p>This stratified comparison reduces the bias introduced by severity. While it does not replicate the clean separation achieved by randomization, it moves the analysis closer to an apples-to-apples comparison.</p>
 </section>
 </section>
-<section id="main-lessons" class="level2" data-number="7">
-<h2 data-number="7" class="anchored" data-anchor-id="main-lessons"><span class="header-section-number">7</span> Main Lessons</h2>
+<section id="discussion-and-main-lessons" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="discussion-and-main-lessons"><span class="header-section-number">7</span> Discussion and Main Lessons</h2>
+<p>Taken together, the observational analysis, randomized experiment, and stratified comparison tell a consistent story about confounding and causal interpretation.</p>
 <ol type="1">
-<li><strong>Raw averages can mislead.</strong> In the observational data, Doc Dreamy looks better at first only because he sees easier cases on average.</li>
-<li><strong>Randomization breaks the path from severity to treatment.</strong> In the randomized data, assignment no longer depends on severity, so the difference in averages reflects the effect of the surgeons more directly.</li>
-<li><strong>Stratification is a backup when randomization is not available.</strong> Comparing outcomes within bands of severity helps control the common cause and gives a fairer comparison.</li>
+<li><p><strong>Raw observational averages can be misleading.</strong><br>
+In the observational data, Doc Dreamy initially appears to be the better surgeon because his patients have lower average post-surgical scores. However, he also tends to see less severe cases, while Doc Duck treats more severe cases. The naive comparison of means therefore conflates surgeon skill with differences in case mix.</p></li>
+<li><p><strong>Randomization breaks the link between severity and treatment.</strong><br>
+In the randomized data, surgeon assignment is no longer determined by factors such as severity or perceived appearance. Under this design, Doc Duck achieves lower average post-surgical scores than Doc Dreamy, suggesting that he is the more effective surgeon when patients are comparable at baseline.</p></li>
+<li><p><strong>Stratification is a practical alternative when randomization is not available.</strong><br>
+When only observational data are available, stratifying on baseline severity helps to control for the confounder. Comparing outcomes within bands of severity (such as the overlap region between –1 and 1) produces a fairer comparison and reduces the bias induced by non-random patient allocation.</p></li>
 </ol>
-<p>The three figures and the summary tables together show:</p>
-<ul>
-<li>How a hidden variable (severity) can tilt the numbers.</li>
-<li>How randomization fixes the problem.</li>
-<li>How stratification can approximate that fix when randomization is not an option.</li>
-</ul>
+<p>The broader message is that <strong>causal interpretation requires more than a simple comparison of averages</strong>. Understanding the data-generating process—who sees which surgeon and why—is essential. Randomization, when feasible, is a powerful design tool for breaking confounding pathways. When randomization is not possible, careful adjustment strategies such as stratification can still provide meaningful insight, though with stronger assumptions.</p>
+<p>In this example, the combination of randomized evidence and stratified observational analysis points to a clear conclusion: despite appearances and initial impressions from the raw observational data, Doc Duck is likely the better surgeon. The apparent advantage of Doc Dreamy in the observational analysis is largely explained by severity acting as a common-cause confounder.</p>
 </section>
 
 </main>

@@ -1,6 +1,6 @@
 ---
 title: "Using Randomization & Stratification to Overcome a Common Cause Confounder"
-subtitle: "Doc Dreamy vs Doc Duck"
+subtitle: "Comparing Surgical Outcomes for Doc Dreamy and Doc Duck"
 format:
   html:
     toc: true
@@ -25,18 +25,16 @@ execute:
 </style>
 ```
 
-## Story Setup: Two Surgeons, Very Different Looks
+## Introduction
 
-<div style="float: right; margin-left: 15px; margin-bottom: 10px;">
-<img src="docSideBySide.jpg" alt="Doc Dreamy and Doc Duck side by side" style="max-width: 220px; height: auto; border-radius: 5px;">
-</div>
+Clinical data often look convincing at first glance. A simple comparison of averages can make one treatment or clinician appear superior. However, when treatment choice is related to patient characteristics, those same averages can be badly misleading.
 
-Imagine you need surgery and you can choose between two surgeons at the same hospital.
+In this report, we study outcomes for two surgeons working at the same hospital:
 
-- **Doc Dreamy** looks exactly how people expect a surgeon to look. Calm, polished, nice office, diplomas on the wall.
-- **Doc Duck** looks rough. Bigger build, messy office, and not much on the walls.
+- **Doc Dreamy**, who fits the stereotypical image of a highly polished specialist.
+- **Doc Duck**, whose appearance and style may not match common expectations.
 
-Most people would feel safer picking Doc Dreamy. But looks can hide what is really going on in the data. Here we walk through data for these two doctors and see how a hidden factor can flip the story.
+We use observational data, randomized data, and stratification by baseline severity to show how a common-cause confounder can reverse the apparent ranking of these two surgeons. Randomization and stratification are then used to recover a more credible causal story.
 
 ## Data and Notation
 
@@ -62,21 +60,21 @@ n_patients_rnd = len(patients_randomized_df)
 
 We work with two data sets:
 
-- **Observational data**: patients picked their surgeon based on real-world factors like looks, waiting time, and personal preference.
-- **Randomized data**: patients were assigned to surgeons by something like a coin flip.
+- **Observational data**: patients selected their surgeon under usual care (driven by preferences, urgency, appearance, scheduling, and so on).
+- **Randomized data**: patients were assigned to a surgeon using a random mechanism, independent of patient characteristics.
 
-The main outcome is:
+For each patient, we observe:
 
-- `post_surgical_score` – symptom score after surgery (lower values mean better recovery).
-
-We also have:
-
-- `severity` – how serious the case was before surgery.
+- `severity` – baseline symptom severity before surgery.
 - `doctor_name` – `"Doc Dreamy"` or `"Doc Duck"`.
+- `post_surgical_score` – symptom score after surgery  
+  (lower values indicate better outcomes).
 
-## Observational Data: First Impression Favors Doc Dreamy
+Throughout, the goal is not only to describe these data, but to understand **how much of the observed difference in outcomes can be attributed to the choice of surgeon**, rather than to differences in the types of patients they treat.
 
-In the observational data, patients did not get assigned randomly. They chose a surgeon based on what they saw and how urgent they felt their case was.
+## Observational Data: A First, Misleading Impression
+
+In the observational dataset, patients did not receive surgeons at random. They chose, or were scheduled with, a surgeon based on real-world factors such as availability, perceived skill, and appearance. As a result, baseline severity can be imbalanced between the two surgeons.
 
 ### Summary of Observational Outcomes
 
@@ -119,13 +117,13 @@ def style_summary(df):
 style_summary(summary_obs)
 ```
 
-In this setting, Doc Dreamy has the lower average post-surgical score, so at first glance it looks like he is doing better. But this conclusion is based on raw averages only.
+In the observational data, Doc Dreamy has a lower average post-surgical symptom score than Doc Duck. If one simply compares these averages, Doc Dreamy appears to be the better surgeon. However, the same summary also shows that Doc Dreamy tends to treat less severe cases on average, while Doc Duck treats more severe cases. This raises the possibility that the apparent advantage for Doc Dreamy is driven by differences in the patients, not differences in skill.
 
-### Figure 1 – Observational Outcomes by Patient
+### Figure&nbsp;1 – Observational Outcomes by Patient
 
 ```{python}
 #| label: fig-observational
-#| fig-cap: "Observed post-surgical symptom scores for each patient by surgeon."
+#| fig-cap: "Observed post-surgical symptom scores for each patient, by surgeon."
 #| out-width: "100%"
 #| fig-align: "center"
 
@@ -140,7 +138,7 @@ rng = np.random.default_rng(123)
 jitter_dreamy = rng.uniform(-0.15, 0.15, size=len(dreamy))
 jitter_duck   = rng.uniform(-0.15, 0.15, size=len(duck))
 
-# Scatter points with a bit of glow effect
+# Scatter points with a subtle glow effect
 for size, alpha in [(70, 0.9), (120, 0.15)]:
     ax.scatter(
         dreamy["patient"] + jitter_dreamy,
@@ -211,33 +209,40 @@ plt.tight_layout()
 plt.show()
 ```
 
-Looking only at this figure and the earlier summary, the obvious answer is:
+Figure&nbsp;1 reinforces the first impression from the table: the horizontal mean line for Doc Dreamy lies below the mean line for Doc Duck, suggesting better outcomes for Doc Dreamy when we look only at aggregate observational data.
 
-> Doc Dreamy looks better in the observational data because his patients have lower scores on average.
+From a causal perspective, however, this is an incomplete story. We still need to understand **why** patients ended up with each surgeon in the first place.
 
-But this ignores how patients ended up with each surgeon.
+## Severity as a Common-Cause Confounder
 
-## The Hidden Variable: Severity as a Common Cause
+A useful way to structure this problem is through directed acyclic graphs (DAGs). A simple mental model is shown in Figure&nbsp;2.
 
-A directed graph (DAG) helps to keep the story straight.
+![Simple model: surgeon directly affects outcome.](dag-example-node.png){#fig-example-node width=55%}
 
-![First mental model: surgeon directly affects outcome.](dag-example-node.png){#fig-example-node width=55%}
+In this initial picture, surgeon identity directly affects the post-surgical outcome. If we believe this model and take the observational difference in mean symptom scores at face value, we might conclude that Doc Dreamy is genuinely better.
 
-If we believe this drawing, we might think that the surgeon is the main reason for the outcome differences. But suppose severity affects both who the patient chooses and how they recover.
+However, suppose baseline severity influences both **which surgeon a patient sees** and **how well that patient recovers**. In that case, severity becomes a common-cause confounder, as illustrated in Figure&nbsp;3.
 
-![Alternate model: severity influences both surgeon choice and outcome.](dag-example2-node.png){#fig-example2-node width=55%}
+![Common-cause model: severity influences both surgeon choice and outcome.](dag-example2-node.png){#fig-example2-node width=55%}
 
-In this second drawing, severity is a common cause. Less severe cases may feel they can wait longer and go with the surgeon who looks more polished. More severe cases may just want the earliest available appointment, even if that means going to the surgeon who looks less polished.
+A plausible story is the following:
 
-If severity pushes easier cases toward Doc Dreamy and tougher cases toward Doc Duck, the raw averages will be biased in favor of Doc Dreamy, even if Doc Duck is actually better at surgery.
+- Patients with **milder symptoms** may be willing to wait longer and may prefer the surgeon who appears more polished and reassuring (Doc Dreamy).
+- Patients with **more severe symptoms** may be motivated to seek the earliest available surgery date, even if that means seeing a surgeon who does not fit the stereotypical image (Doc Duck).
 
-## Breaking the Link: Randomized Assignment
+If this is true, then Doc Dreamy will systematically see easier cases and Doc Duck will systematically see harder cases. In this setting, the raw comparison of mean outcomes is biased in favor of Doc Dreamy, even if Doc Duck is actually the more skilled surgeon.
 
-One way to break the connection between severity and surgeon choice is to assign surgeons at random.
+To recover a credible causal comparison, we need a design that breaks the link between severity and surgeon choice, or a statistical strategy that accounts for severity directly.
+
+## Randomized Assignment: Breaking the Confounding Path
+
+Randomized experiments are designed to address precisely this type of problem. Under randomization, patients no longer choose their surgeon based on appearance, availability, or severity. Instead, a random mechanism (like a coin flip) assigns each patient to a surgeon, making surgeon identity independent of baseline severity.
+
+This design is summarized conceptually in Figure&nbsp;4.
 
 ![Randomization breaks the link between severity and surgeon choice.](dag-example3-node.png){#fig-example3-node width=65%}
 
-In the randomized data, surgeon assignment no longer depends on severity. This lets us see the effect of surgeon identity more directly.
+In this DAG, severity still affects the outcome, but it no longer affects surgeon choice. Randomization determines the surgeon, which allows us to interpret differences in outcomes as the causal effect of surgeon identity, up to random variation.
 
 ### Summary of Randomized Outcomes
 
@@ -259,9 +264,14 @@ summary_rnd = (
 style_summary(summary_rnd)
 ```
 
-Here the story changes. The randomized summary shows which surgeon tends to have the better outcomes once the severity imbalance has been removed.
+The randomized summary reveals a very different pattern from the observational data. In this setting:
 
-### Figure 2 – Randomized Outcomes by Patient
+- Doc Duck has a **lower average post-surgical score** than Doc Dreamy.
+- The average baseline severity is similar across the two surgeons, reflecting the fact that assignment was not driven by severity.
+
+Because surgeon identity is no longer entangled with baseline severity, this difference in mean outcomes is much closer to the causal effect of interest.
+
+### Figure&nbsp;2 – Randomized Outcomes by Patient
 
 ```{python}
 #| label: fig-randomized
@@ -309,7 +319,7 @@ mean_dreamy_r = dreamy_r["post_surgical_score"].mean()
 mean_duck_r   = duck_r["post_surgical_score"].mean()
 
 ax.axhline(mean_dreamy_r, linestyle="--", color=dreamy_color, linewidth=2, alpha=0.9)
-ax.axhline(mean_duck_r,   linestyle="--", color=duck_color,   linewidth=2, alpha=0.9)
+ax.axhline(mean_duck_r,   linestyle="--", color=duck_color, linewidth=2, alpha=0.9)
 
 x_center_r = n_patients_rnd * 0.7
 ax.text(
@@ -347,23 +357,25 @@ plt.tight_layout()
 plt.show()
 ```
 
-In this figure, the average lines tell a different story than before. Once surgeon assignment is separated from severity, the advantage seen in the observational data can disappear or reverse.
+In Figure&nbsp;2, the mean line for Doc Duck lies below the mean line for Doc Dreamy. With assignment randomized, this provides evidence that Doc Duck is the more effective surgeon on average, even though the observational data initially suggested the opposite.
 
-Randomization answers the question:
+Randomization allows us to ask a clean question:
 
-> If two groups of patients with similar severity are assigned to surgeons by chance, who does better on average?
+> *If two similar groups of patients are assigned to surgeons by chance, which surgeon tends to achieve better outcomes?*
 
-## When Randomization Is Not Possible: Stratification by Severity
+In these data, the randomized comparison points to Doc Duck.
 
-In many real settings we cannot randomize who gets which treatment. A common plan in that case is to compare outcomes **within bands of severity** so that we are comparing people who started in roughly the same state.
+## Stratification by Severity: When Randomization Is Not Available
 
-Here we look at initial severity on the x-axis and post-surgical score on the y-axis, using the observational data.
+Randomized experiments are powerful, but they are not always feasible. In many real-world settings, we must work with observational data only. In those cases, one common strategy is **stratification**: comparing outcomes within groups of patients who share similar values of the confounder.
 
-### Figure 3 – Outcomes by Severity (Stratified View)
+Here, the confounder is baseline severity. We therefore examine post-surgical scores as a function of initial severity, using the observational data.
+
+### Figure&nbsp;3 – Outcomes by Baseline Severity
 
 ```{python}
 #| label: fig-severity
-#| fig-cap: "Post-surgical symptom scores versus initial severity, highlighting the region where both surgeons see many patients."
+#| fig-cap: "Post-surgical symptom scores versus baseline severity, highlighting the region where both surgeons treat many patients."
 #| out-width: "100%"
 #| fig-align: "center"
 
@@ -429,9 +441,9 @@ ax.text(
     ha="right",
 )
 
-ax.set_xlabel("Initial patient severity", color="white", fontsize=11)
+ax.set_xlabel("Baseline severity", color="white", fontsize=11)
 ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=11)
-ax.set_title("Post-surgical symptom scores by initial severity – observational data", color="white", fontsize=13, pad=10)
+ax.set_title("Post-surgical symptom scores by baseline severity – observational data", color="white", fontsize=13, pad=10)
 
 ax.grid(True, linestyle=":", color=grid_color, alpha=0.6)
 ax.tick_params(colors="white")
@@ -444,9 +456,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-Inside the shaded band between -1 and 1 on the x-axis, both surgeons have a good number of patients. This is the best place to compare them fairly using the observational data.
+In Figure&nbsp;3, the horizontal axis represents baseline severity and the vertical axis represents post-surgical scores. The shaded band between –1 and 1 marks a region of **overlap**, where both surgeons treat a substantial number of patients with similar initial severity. Outside this band, Doc Duck tends to see more severe patients (higher severity values), while Doc Dreamy sees more mild cases (lower severity values).
 
-### Summary Inside the Overlap Band
+### Summary Within the Overlap Band
 
 ```{python}
 #| label: tbl-overlap-summary
@@ -468,18 +480,24 @@ summary_overlap = (
 style_summary(summary_overlap)
 ```
 
-Now the comparison is made for patients who started with similar severity. This reduces the bias from the common cause and gives a fairer comparison.
+The overlap summary focuses on patients whose baseline severity lies between –1 and 1, where the two surgeons are directly comparable. Within this band, the difference in average post-surgical scores is smaller than in the full observational sample, and Doc Duck often appears more competitive or even favorable relative to Doc Dreamy.
 
-Within this overlap band, Doc Duck often looks stronger than the raw overall averages suggest.
+This stratified comparison reduces the bias introduced by severity. While it does not replicate the clean separation achieved by randomization, it moves the analysis closer to an apples-to-apples comparison.
 
-## Main Lessons
+## Discussion and Main Lessons
 
-1. **Raw averages can mislead.** In the observational data, Doc Dreamy looks better at first only because he sees easier cases on average.
-2. **Randomization breaks the path from severity to treatment.** In the randomized data, assignment no longer depends on severity, so the difference in averages reflects the effect of the surgeons more directly.
-3. **Stratification is a backup when randomization is not available.** Comparing outcomes within bands of severity helps control the common cause and gives a fairer comparison.
+Taken together, the observational analysis, randomized experiment, and stratified comparison tell a consistent story about confounding and causal interpretation.
 
-The three figures and the summary tables together show:
+1. **Raw observational averages can be misleading.**  
+   In the observational data, Doc Dreamy initially appears to be the better surgeon because his patients have lower average post-surgical scores. However, he also tends to see less severe cases, while Doc Duck treats more severe cases. The naive comparison of means therefore conflates surgeon skill with differences in case mix.
 
-- How a hidden variable (severity) can tilt the numbers.
-- How randomization fixes the problem.
-- How stratification can approximate that fix when randomization is not an option.
+2. **Randomization breaks the link between severity and treatment.**  
+   In the randomized data, surgeon assignment is no longer determined by factors such as severity or perceived appearance. Under this design, Doc Duck achieves lower average post-surgical scores than Doc Dreamy, suggesting that he is the more effective surgeon when patients are comparable at baseline.
+
+3. **Stratification is a practical alternative when randomization is not available.**  
+   When only observational data are available, stratifying on baseline severity helps to control for the confounder. Comparing outcomes within bands of severity (such as the overlap region between –1 and 1) produces a fairer comparison and reduces the bias induced by non-random patient allocation.
+
+The broader message is that **causal interpretation requires more than a simple comparison of averages**. Understanding the data-generating process—who sees which surgeon and why—is essential. Randomization, when feasible, is a powerful design tool for breaking confounding pathways. When randomization is not possible, careful adjustment strategies such as stratification can still provide meaningful insight, though with stronger assumptions.
+
+In this example, the combination of randomized evidence and stratified observational analysis points to a clear conclusion: despite appearances and initial impressions from the raw observational data, Doc Duck is likely the better surgeon. The apparent advantage of Doc Dreamy in the observational analysis is largely explained by severity acting as a common-cause confounder.
+
