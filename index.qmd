@@ -57,9 +57,9 @@ import matplotlib.pyplot as plt
 patients_df = pd.read_csv("patients_data.csv")
 patients_randomized_df = pd.read_csv("patients_data_randomized.csv")
 
-# Color choices for light-style figures
-dreamy_color = "#4F46E5"  # indigo
-duck_color   = "#16A34A"  # green
+# Color choices (prof-specified, colorblind-friendly)
+dreamy_color = "#4E79A7"  # blue
+duck_color   = "#E15759"  # coral / red-orange
 grid_color   = "#D1D5DB"  # light gray grid
 
 n_patients_obs = len(patients_df)
@@ -102,6 +102,25 @@ summary_obs = (
 )
 
 def style_summary(df, caption):
+    # Colorful summary table:
+    # - Blue pill for Doc Dreamy mean_score
+    # - Coral pill for Doc Duck mean_score
+    def kpi_style(row):
+        styles = [""] * len(row)
+        if "mean_score" in row.index:
+            idx = list(row.index).index("mean_score")
+            if row["doctor_name"] == "Doc Dreamy":
+                styles[idx] = (
+                    "background-color: #4E79A7; color: white; "
+                    "border-radius: 999px; padding: 4px 10px;"
+                )
+            elif row["doctor_name"] == "Doc Duck":
+                styles[idx] = (
+                    "background-color: #E15759; color: white; "
+                    "border-radius: 999px; padding: 4px 10px;"
+                )
+        return styles
+
     styler = (
         df.style
         .set_caption(caption)
@@ -117,17 +136,20 @@ def style_summary(df, caption):
              "props": [("caption-side", "top"),
                        ("font-weight", "bold"),
                        ("padding", "6px"),
-                       ("color", "#111827")]},
-            {"selector": "th",
-             "props": [("background-color", "#F3F4F6"),
                        ("color", "#111827"),
-                       ("padding", "8px")]},
+                       ("font-size", "0.98rem")]},
+            {"selector": "th",
+             "props": [("background-color", "#EEF2FF"),
+                       ("color", "#111827"),
+                       ("padding", "8px"),
+                       ("border-bottom", "2px solid #C7D2FE")]},
             {"selector": "td",
              "props": [("padding", "6px"),
                        ("color", "#111827"),
                        ("border-top", "1px solid #E5E7EB")]},
         ])
     )
+    styler = styler.apply(kpi_style, axis=1)
     return styler
 
 style_summary(
@@ -136,79 +158,85 @@ style_summary(
 )
 ```
 
-In the observational data, Doc Dreamy has a lower average post-surgical symptom score than Doc Duck. If one simply compares these averages, Doc Dreamy appears to be the better surgeon. However, the same summary also shows that Doc Dreamy tends to treat less severe cases on average, while Doc Duck treats more severe cases. This raises the possibility that the apparent advantage for Doc Dreamy is driven by differences in the patients, not differences in skill.
+In the observational data, Doc Dreamy has a lower average post-surgical symptom score than Doc Duck. Numerically, Dreamy’s mean is **2.80**, compared with **3.38** for Duck—a gap of about **0.6 points** in favor of Doc Dreamy. However, the same summary also shows that Doc Dreamy tends to treat less severe cases on average (mean severity –0.67), while Doc Duck treats more severe cases (mean severity 0.85). This raises the possibility that the apparent advantage for Doc Dreamy is driven by differences in the patients, not differences in skill.
 
 ### Observational Outcomes by Patient
 
 ```{python}
 #| label: fig-observational
-#| fig-cap: "Observed post-surgical symptom scores for each patient (left), and mean scores with 95% confidence intervals (right)."
+#| fig-cap: "Post-surgical symptom score by patient and doctor – observational data."
 #| out-width: "100%"
 #| fig-align: "center"
 
 dreamy = patients_df[patients_df["doctor_name"] == "Doc Dreamy"]
 duck   = patients_df[patients_df["doctor_name"] == "Doc Duck"]
 
-scores = [dreamy["post_surgical_score"], duck["post_surgical_score"]]
-labels = ["Doc Dreamy", "Doc Duck"]
-colors = [dreamy_color, duck_color]
+fig, ax = plt.subplots(figsize=(7, 4))
 
-fig, axes = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [3, 2]})
-ax_scatter, ax_bar = axes
-
-# --- Left: jittered patients on a vertical strip ---
-rng = np.random.default_rng(2027)
-positions = [0, 1]
-
-for pos, sers, color in zip(positions, scores, colors):
-    x_jitter = pos + rng.normal(0, 0.06, size=len(sers))
-    ax_scatter.scatter(
-        x_jitter,
-        sers,
-        s=30,
-        color=color,
-        alpha=0.75,
-        edgecolor="#374151",
-        linewidth=0.3,
-    )
-
-ax_scatter.set_xticks(positions)
-ax_scatter.set_xticklabels(labels, rotation=0)
-ax_scatter.set_ylabel("Post-surgical symptom score (lower is better)")
-ax_scatter.set_title("Individual patients")
-
-ax_scatter.grid(True, linestyle=":", color=grid_color, alpha=0.8, axis="y")
-ax_scatter.set_xlim(-0.4, 1.4)
-
-# --- Right: mean ± 95% CI bar chart ---
-means = [s.mean() for s in scores]
-ses = [s.std(ddof=1) / np.sqrt(len(s)) for s in scores]
-cis = [1.96 * se for se in ses]
-
-x_bar = np.arange(len(labels))
-ax_bar.bar(x_bar, means, color=colors, alpha=0.8)
-ax_bar.errorbar(
-    x_bar,
-    means,
-    yerr=cis,
-    fmt="none",
-    ecolor="#111827",
-    elinewidth=1.4,
-    capsize=6,
+# Scatter points by patient number
+ax.scatter(
+    dreamy["patient"],
+    dreamy["post_surgical_score"],
+    s=40,
+    color=dreamy_color,
+    marker="o",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Dreamy (○)",
 )
-for x, m in zip(x_bar, means):
-    ax_bar.text(x, m + 0.05, f"{m:.2f}", ha="center", va="bottom", fontsize=9)
+ax.scatter(
+    duck["patient"],
+    duck["post_surgical_score"],
+    s=40,
+    color=duck_color,
+    marker="^",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Duck (△)",
+)
 
-ax_bar.set_xticks(x_bar)
-ax_bar.set_xticklabels(labels, rotation=0)
-ax_bar.set_title("Mean score with 95% CI")
-ax_bar.grid(True, linestyle=":", color=grid_color, alpha=0.8, axis="y")
+# Mean lines
+mean_dreamy = dreamy["post_surgical_score"].mean()
+mean_duck   = duck["post_surgical_score"].mean()
+
+ax.axhline(mean_dreamy, color=dreamy_color, linestyle="--", linewidth=2)
+ax.axhline(mean_duck,   color=duck_color,   linestyle="--", linewidth=2)
+
+# Text annotations near the right side to avoid overlap
+x_max = patients_df["patient"].max()
+x_text = x_max + 2
+
+ax.text(
+    x_text,
+    mean_dreamy,
+    f"○ Doc Dreamy mean = {mean_dreamy:.2f}",
+    color=dreamy_color,
+    va="center",
+)
+ax.text(
+    x_text,
+    mean_duck,
+    f"△ Doc Duck mean = {mean_duck:.2f}",
+    color=duck_color,
+    va="center",
+)
+
+ax.set_xlim(1, x_text + 3)
+
+ax.set_xlabel("Patient number")
+ax.set_ylabel("Post-surgical symptom score (lower is better)")
+ax.set_title("Post-Surgical Symptom Score by Patient and Doctor")
+
+ax.grid(True, linestyle=":", color=grid_color)
+ax.legend(frameon=False, loc="upper left")
 
 plt.tight_layout()
 plt.show()
 ```
 
-From the left panel we see the full spread of outcomes for each surgeon. The right panel summarizes these outcomes numerically, making the size and uncertainty of the difference in means easy to read without crowding the raw data.
+From this figure we see the post-surgical scores for all 100 observational patients by surgeon, along with dashed mean lines and clearly separated annotations for the average outcomes.
 
 ## Severity as a Common-Cause Confounder
 
@@ -267,79 +295,84 @@ style_summary(
 The randomized summary reveals a very different pattern from the observational data. In this setting:
 
 - Doc Duck has a **lower average post-surgical score** than Doc Dreamy.
-- The average baseline severity is similar across the two surgeons, reflecting the fact that assignment was not driven by severity.
+- The average baseline severity is similar across the two surgeons (means around 0.0–0.2), reflecting the fact that assignment was not driven by severity.
 
-Because surgeon identity is no longer entangled with baseline severity, this difference in mean outcomes is much closer to the causal effect of interest.
+Numerically, the mean post-surgical score is **3.46** for Doc Dreamy and **2.71** for Doc Duck—a gap of about **0.75 points** in favor of Doc Duck when patients are assigned at random.
 
 ### Randomized Outcomes by Patient
 
 ```{python}
 #| label: fig-randomized
-#| fig-cap: "Post-surgical symptom scores under randomized surgeon assignment (left: individual patients; right: mean scores with 95% confidence intervals)."
+#| fig-cap: "Post-surgical symptom score (randomized assignment) by patient and doctor."
 #| out-width: "100%"
 #| fig-align: "center"
 
 dreamy_r = patients_randomized_df[patients_randomized_df["doctor_name"] == "Doc Dreamy"]
 duck_r   = patients_randomized_df[patients_randomized_df["doctor_name"] == "Doc Duck"]
 
-scores_r = [dreamy_r["post_surgical_score"], duck_r["post_surgical_score"]]
-labels_r = ["Doc Dreamy", "Doc Duck"]
-colors_r = [dreamy_color, duck_color]
+fig, ax = plt.subplots(figsize=(7, 4))
 
-fig, axes = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [3, 2]})
-ax_scatter_r, ax_bar_r = axes
-
-rng_r = np.random.default_rng(2028)
-positions_r = [0, 1]
-
-for pos, sers, color in zip(positions_r, scores_r, colors_r):
-    x_jitter = pos + rng_r.normal(0, 0.06, size=len(sers))
-    ax_scatter_r.scatter(
-        x_jitter,
-        sers,
-        s=30,
-        color=color,
-        alpha=0.75,
-        edgecolor="#374151",
-        linewidth=0.3,
-    )
-
-ax_scatter_r.set_xticks(positions_r)
-ax_scatter_r.set_xticklabels(labels_r)
-ax_scatter_r.set_ylabel("Post-surgical symptom score (lower is better)")
-ax_scatter_r.set_title("Individual patients")
-
-ax_scatter_r.grid(True, linestyle=":", color=grid_color, alpha=0.8, axis="y")
-ax_scatter_r.set_xlim(-0.4, 1.4)
-
-means_r = [s.mean() for s in scores_r]
-ses_r = [s.std(ddof=1) / np.sqrt(len(s)) for s in scores_r]
-cis_r = [1.96 * se for se in ses_r]
-
-x_bar_r = np.arange(len(labels_r))
-ax_bar_r.bar(x_bar_r, means_r, color=colors_r, alpha=0.8)
-ax_bar_r.errorbar(
-    x_bar_r,
-    means_r,
-    yerr=cis_r,
-    fmt="none",
-    ecolor="#111827",
-    elinewidth=1.4,
-    capsize=6,
+ax.scatter(
+    dreamy_r["patient"],
+    dreamy_r["post_surgical_score"],
+    s=40,
+    color=dreamy_color,
+    marker="o",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Dreamy (○)",
 )
-for x, m in zip(x_bar_r, means_r):
-    ax_bar_r.text(x, m + 0.05, f"{m:.2f}", ha="center", va="bottom", fontsize=9)
+ax.scatter(
+    duck_r["patient"],
+    duck_r["post_surgical_score"],
+    s=40,
+    color=duck_color,
+    marker="^",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Duck (△)",
+)
 
-ax_bar_r.set_xticks(x_bar_r)
-ax_bar_r.set_xticklabels(labels_r)
-ax_bar_r.set_title("Mean score with 95% CI")
-ax_bar_r.grid(True, linestyle=":", color=grid_color, alpha=0.8, axis="y")
+mean_dreamy_r = dreamy_r["post_surgical_score"].mean()
+mean_duck_r   = duck_r["post_surgical_score"].mean()
+
+ax.axhline(mean_dreamy_r, color=dreamy_color, linestyle="--", linewidth=2)
+ax.axhline(mean_duck_r,   color=duck_color,   linestyle="--", linewidth=2)
+
+x_max_r = patients_randomized_df["patient"].max()
+x_text_r = x_max_r + 2
+
+ax.text(
+    x_text_r,
+    mean_dreamy_r,
+    f"○ Doc Dreamy mean = {mean_dreamy_r:.2f}",
+    color=dreamy_color,
+    va="center",
+)
+ax.text(
+    x_text_r,
+    mean_duck_r,
+    f"△ Doc Duck mean = {mean_duck_r:.2f}",
+    color=duck_color,
+    va="center",
+)
+
+ax.set_xlim(1, x_text_r + 3)
+
+ax.set_xlabel("Patient number")
+ax.set_ylabel("Post-surgical symptom score (lower is better)")
+ax.set_title("Post-Surgical Symptom Score (Randomized Assignment)")
+
+ax.grid(True, linestyle=":", color=grid_color)
+ax.legend(frameon=False, loc="upper left")
 
 plt.tight_layout()
 plt.show()
 ```
 
-In the randomized data, the right-hand panel makes clear that Doc Duck’s mean lies below Doc Dreamy’s, with overlapping but shifted confidence intervals—evidence that Duck is the more effective surgeon on average when case mix is balanced by design.
+Under randomization, the dashed mean line for Doc Duck lies clearly below Doc Dreamy’s, and the annotations emphasize that Duck’s average outcome is better when patients are assigned by chance rather than by self-selection.
 
 Randomization allows us to ask a clean question:
 
@@ -357,7 +390,7 @@ Here, the confounder is baseline severity. We therefore examine post-surgical sc
 
 ```{python}
 #| label: fig-severity
-#| fig-cap: "Post-surgical symptom scores versus baseline severity in the observational data, with smoothed trend lines for each surgeon. The shaded band marks the overlap region (-1 ≤ severity ≤ 1)."
+#| fig-cap: "Post-surgical symptom score by baseline severity – observational data, with overlap region highlighted."
 #| out-width: "100%"
 #| fig-align: "center"
 
@@ -372,46 +405,62 @@ ax.axvspan(-1, 1, color="#E5E7EB", alpha=0.8, label="Overlap region (-1 to 1)")
 ax.scatter(
     dreamy["severity"],
     dreamy["post_surgical_score"],
-    s=28,
+    s=40,
     color=dreamy_color,
-    alpha=0.75,
-    edgecolor="#374151",
-    linewidth=0.3,
-    label="Doc Dreamy patients",
+    marker="o",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Dreamy (○)",
 )
 ax.scatter(
     duck["severity"],
     duck["post_surgical_score"],
-    s=28,
+    s=40,
     color=duck_color,
-    alpha=0.75,
-    edgecolor="#374151",
-    linewidth=0.3,
-    label="Doc Duck patients",
+    marker="^",
+    edgecolor="black",
+    linewidth=0.4,
+    alpha=0.8,
+    label="Doc Duck (△)",
 )
 
-# Simple smoothed trends via polynomial fit (degree 2)
-for data, color, name in [(dreamy, dreamy_color, "Doc Dreamy trend"),
-                          (duck, duck_color, "Doc Duck trend")]:
-    x = data["severity"].values
-    y = data["post_surgical_score"].values
-    x_grid = np.linspace(x.min(), x.max(), 200)
-    coeffs = np.polyfit(x, y, deg=2)
-    y_smooth = np.polyval(coeffs, x_grid)
-    ax.plot(x_grid, y_smooth, color=color, linewidth=2.0, label=name)
+# Mean lines (overall observational means)
+mean_dreamy_obs = dreamy["post_surgical_score"].mean()
+mean_duck_obs   = duck["post_surgical_score"].mean()
+
+ax.axhline(mean_dreamy_obs, color=dreamy_color, linestyle="--", linewidth=2)
+ax.axhline(mean_duck_obs,   color=duck_color,   linestyle="--", linewidth=2)
+
+x_right = patients_df["severity"].max() + 0.3
+
+ax.text(
+    x_right,
+    mean_dreamy_obs,
+    f"○ Doc Dreamy mean = {mean_dreamy_obs:.2f}",
+    color=dreamy_color,
+    va="center",
+)
+ax.text(
+    x_right,
+    mean_duck_obs,
+    f"△ Doc Duck mean = {mean_duck_obs:.2f}",
+    color=duck_color,
+    va="center",
+)
 
 ax.set_xlabel("Baseline severity")
 ax.set_ylabel("Post-surgical symptom score (lower is better)")
-ax.set_title("Post-surgical symptom scores by baseline severity – observational data")
+ax.set_title("Post-Surgical Symptom Score by Patient Severity")
 
-ax.grid(True, linestyle=":", color=grid_color, alpha=0.9)
+ax.grid(True, linestyle=":", color=grid_color)
 ax.legend(frameon=False, loc="upper left")
 
 plt.tight_layout()
 plt.show()
 ```
 
-In Figure 3, the shaded vertical band again marks the severity range where both surgeons treat many patients. The smooth trend lines help show how outcomes vary with baseline severity for each surgeon, without cluttering the figure with numerical labels.
+In this figure, the horizontal axis represents baseline severity and the vertical axis represents post-surgical scores. The shaded band between –1 and 1 marks a region of **overlap**, where both surgeons treat a substantial number of patients with similar initial severity. Outside this band, Doc Duck tends to see more severe patients (higher severity values), while Doc Dreamy sees more mild cases (lower severity values). The dashed mean lines and annotations summarize the overall outcomes for each surgeon.
 
 ### Summary Within the Overlap Band
 
@@ -438,7 +487,7 @@ style_summary(
 )
 ```
 
-The overlap summary focuses on patients whose baseline severity lies between –1 and 1, where the two surgeons are directly comparable. Within this band, the difference in average post-surgical scores is smaller than in the full observational sample, and Doc Duck often appears more competitive or even favorable relative to Doc Dreamy.
+The overlap summary focuses on patients whose baseline severity lies between –1 and 1, where the two surgeons are directly comparable. Within this band, the difference in average post-surgical scores is smaller than in the full observational sample, and Doc Duck often appears more competitive or even favorable relative to Doc Dreamy. Here, Duck’s mean score is **2.94** versus **3.23** for Dreamy, reversing the ranking from the full observational sample.
 
 This stratified comparison reduces the bias introduced by severity. While it does not replicate the clean separation achieved by randomization, it moves the analysis closer to an apples-to-apples comparison.
 
@@ -447,13 +496,13 @@ This stratified comparison reduces the bias introduced by severity. While it doe
 Taken together, the observational analysis, randomized experiment, and stratified comparison tell a consistent story about confounding and causal interpretation.
 
 1. **Raw observational averages can be misleading.**  
-   In the observational data, Doc Dreamy initially appears to be the better surgeon because his patients have lower average post-surgical scores. However, he also tends to see less severe cases, while Doc Duck treats more severe cases. The naive comparison of means therefore conflates surgeon skill with differences in case mix.
+   In the observational data, Doc Dreamy initially appears to be the better surgeon because his patients have lower average post-surgical scores (2.80 vs 3.38). However, he also tends to see less severe cases (mean severity –0.67), while Doc Duck treats more severe cases (0.85). The naive comparison of means therefore conflates surgeon skill with differences in case mix.
 
 2. **Randomization breaks the link between severity and treatment.**  
-   In the randomized data, surgeon assignment is no longer determined by factors such as severity or perceived appearance. Under this design, Doc Duck achieves lower average post-surgical scores than Doc Dreamy, suggesting that he is the more effective surgeon when patients are comparable at baseline.
+   In the randomized data, surgeon assignment is no longer determined by factors such as severity or perceived appearance. Under this design, Doc Duck achieves lower average post-surgical scores than Doc Dreamy (2.71 vs 3.46), suggesting that he is the more effective surgeon when patients are comparable at baseline.
 
 3. **Stratification is a practical alternative when randomization is not available.**  
-   When only observational data are available, stratifying on baseline severity helps to control for the confounder. Comparing outcomes within bands of severity (such as the overlap region between –1 and 1) produces a fairer comparison and reduces the bias induced by non-random patient allocation.
+   When only observational data are available, stratifying on baseline severity helps to control for the confounder. Comparing outcomes within bands of severity (such as the overlap region between –1 and 1) produces a fairer comparison and reduces the bias induced by non-random patient allocation. Within this overlap band, Duck’s mean score (2.94) is lower than Dreamy’s (3.23), echoing the story from the randomized experiment.
 
 The broader message is that **causal interpretation requires more than a simple comparison of averages**. Understanding the data-generating process—who sees which surgeon and why—is essential. Randomization, when feasible, is a powerful design tool for breaking confounding pathways. When randomization is not possible, careful adjustment strategies such as stratification can still provide meaningful insight, though with stronger assumptions.
 
