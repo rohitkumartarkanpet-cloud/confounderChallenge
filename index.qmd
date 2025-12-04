@@ -6,12 +6,24 @@ format:
     toc: true
     toc-depth: 2
     number-sections: true
+    fig-align: center
+    fig-width: 7
+    fig-height: 4
 execute:
   echo: false
   eval: true
   warning: false
   message: false
 ---
+
+```{=html}
+<style>
+.quarto-figure img, img {
+  max-width: 100%;
+  height: auto;
+}
+</style>
+```
 
 ## Story Setup: Two Surgeons, Very Different Looks
 
@@ -24,7 +36,7 @@ Imagine you need surgery and you can choose between two surgeons at the same hos
 - **Doc Dreamy** looks exactly how people expect a surgeon to look. Calm, polished, nice office, diplomas on the wall.
 - **Doc Duck** looks rough. Bigger build, messy office, and not much on the walls.
 
-Most people would feel safer picking Doc Dreamy. But looks can hide what is really going on in the data. Here we walk through real-looking data for these two doctors and see how a hidden factor can flip the story.
+Most people would feel safer picking Doc Dreamy. But looks can hide what is really going on in the data. Here we walk through data for these two doctors and see how a hidden factor can flip the story.
 
 ## Data and Notation
 
@@ -50,7 +62,7 @@ n_patients_rnd = len(patients_randomized_df)
 
 We work with two data sets:
 
-- **Observational data**: patients picked their surgeon in a realistic way (based on looks, waiting time, and personal preference).
+- **Observational data**: patients picked their surgeon based on real-world factors like looks, waiting time, and personal preference.
 - **Randomized data**: patients were assigned to surgeons by something like a coin flip.
 
 The main outcome is:
@@ -114,11 +126,10 @@ In this setting, Doc Dreamy has the lower average post-surgical score, so at fir
 ```{python}
 #| label: fig-observational
 #| fig-cap: "Observed post-surgical symptom scores for each patient by surgeon."
-#| fig-width: 9
-#| fig-height: 5
 #| out-width: "100%"
+#| fig-align: "center"
 
-fig, ax = plt.subplots(figsize=(9, 5), facecolor=bg_color)
+fig, ax = plt.subplots(figsize=(7, 4), facecolor=bg_color)
 ax.set_facecolor(bg_color)
 
 dreamy = patients_df[patients_df["doctor_name"] == "Doc Dreamy"]
@@ -130,7 +141,7 @@ jitter_dreamy = rng.uniform(-0.15, 0.15, size=len(dreamy))
 jitter_duck   = rng.uniform(-0.15, 0.15, size=len(duck))
 
 # Scatter points with a bit of glow effect
-for size, alpha in [(90, 0.9), (150, 0.15)]:
+for size, alpha in [(70, 0.9), (120, 0.15)]:
     ax.scatter(
         dreamy["patient"] + jitter_dreamy,
         dreamy["post_surgical_score"],
@@ -140,7 +151,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=dreamy_color,
         alpha=alpha,
-        label="Doc Dreamy" if size == 90 else None,
+        label="Doc Dreamy" if size == 70 else None,
         zorder=3,
     )
     ax.scatter(
@@ -152,7 +163,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=duck_color,
         alpha=alpha,
-        label="Doc Duck" if size == 90 else None,
+        label="Doc Duck" if size == 70 else None,
         zorder=3,
     )
 
@@ -163,13 +174,13 @@ ax.axhline(mean_dreamy, linestyle="--", color=dreamy_color, linewidth=2, alpha=0
 ax.axhline(mean_duck,   linestyle="--", color=duck_color,   linewidth=2, alpha=0.9)
 
 # Place mean labels inside the plotting area
-x_center = n_patients_obs * 0.75
+x_center = n_patients_obs * 0.7
 ax.text(
     x_center,
     mean_dreamy,
     f"○ Doc Dreamy mean = {mean_dreamy:.2f}",
     color=dreamy_color,
-    fontsize=11,
+    fontsize=10,
     va="bottom",
     ha="left",
 )
@@ -178,14 +189,14 @@ ax.text(
     mean_duck,
     f"△ Doc Duck mean = {mean_duck:.2f}",
     color=duck_color,
-    fontsize=11,
+    fontsize=10,
     va="top",
     ha="left",
 )
 
-ax.set_xlabel("Patient number", color="white", fontsize=12)
-ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=12)
-ax.set_title("Post-surgical symptom scores – observational data", color="white", fontsize=14, pad=12)
+ax.set_xlabel("Patient number", color="white", fontsize=11)
+ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=11)
+ax.set_title("Post-surgical symptom scores – observational data", color="white", fontsize=13, pad=10)
 
 ax.grid(True, linestyle=":", color=grid_color, alpha=0.6)
 ax.set_xlim(0, n_patients_obs + 1)
@@ -255,11 +266,10 @@ Here the story changes. The randomized summary shows which surgeon tends to have
 ```{python}
 #| label: fig-randomized
 #| fig-cap: "Post-surgical symptom scores under randomized surgeon assignment."
-#| fig-width: 9
-#| fig-height: 5
 #| out-width: "100%"
+#| fig-align: "center"
 
-fig, ax = plt.subplots(figsize=(9, 5), facecolor=bg_color)
+fig, ax = plt.subplots(figsize=(7, 4), facecolor=bg_color)
 ax.set_facecolor(bg_color)
 
 dreamy_r = patients_randomized_df[patients_randomized_df["doctor_name"] == "Doc Dreamy"]
@@ -269,7 +279,7 @@ rng = np.random.default_rng(456)
 jitter_dreamy_r = rng.uniform(-0.15, 0.15, size=len(dreamy_r))
 jitter_duck_r   = rng.uniform(-0.15, 0.15, size=len(duck_r))
 
-for size, alpha in [(90, 0.9), (150, 0.15)]:
+for size, alpha in [(70, 0.9), (120, 0.15)]:
     ax.scatter(
         dreamy_r["patient"] + jitter_dreamy_r,
         dreamy_r["post_surgical_score"],
@@ -279,7 +289,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=dreamy_color,
         alpha=alpha,
-        label="Doc Dreamy" if size == 90 else None,
+        label="Doc Dreamy" if size == 70 else None,
         zorder=3,
     )
     ax.scatter(
@@ -291,7 +301,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=duck_color,
         alpha=alpha,
-        label="Doc Duck" if size == 90 else None,
+        label="Doc Duck" if size == 70 else None,
         zorder=3,
     )
 
@@ -301,13 +311,13 @@ mean_duck_r   = duck_r["post_surgical_score"].mean()
 ax.axhline(mean_dreamy_r, linestyle="--", color=dreamy_color, linewidth=2, alpha=0.9)
 ax.axhline(mean_duck_r,   linestyle="--", color=duck_color,   linewidth=2, alpha=0.9)
 
-x_center_r = n_patients_rnd * 0.75
+x_center_r = n_patients_rnd * 0.7
 ax.text(
     x_center_r,
     mean_dreamy_r,
     f"○ Doc Dreamy mean = {mean_dreamy_r:.2f}",
     color=dreamy_color,
-    fontsize=11,
+    fontsize=10,
     va="bottom",
     ha="left",
 )
@@ -316,14 +326,14 @@ ax.text(
     mean_duck_r,
     f"△ Doc Duck mean = {mean_duck_r:.2f}",
     color=duck_color,
-    fontsize=11,
+    fontsize=10,
     va="top",
     ha="left",
 )
 
-ax.set_xlabel("Patient number", color="white", fontsize=12)
-ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=12)
-ax.set_title("Post-surgical symptom scores – randomized assignment", color="white", fontsize=14, pad=12)
+ax.set_xlabel("Patient number", color="white", fontsize=11)
+ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=11)
+ax.set_title("Post-surgical symptom scores – randomized assignment", color="white", fontsize=13, pad=10)
 
 ax.grid(True, linestyle=":", color=grid_color, alpha=0.6)
 ax.set_xlim(0, n_patients_rnd + 1)
@@ -354,17 +364,16 @@ Here we look at initial severity on the x-axis and post-surgical score on the y-
 ```{python}
 #| label: fig-severity
 #| fig-cap: "Post-surgical symptom scores versus initial severity, highlighting the region where both surgeons see many patients."
-#| fig-width: 9
-#| fig-height: 5
 #| out-width: "100%"
+#| fig-align: "center"
 
-fig, ax = plt.subplots(figsize=(9, 5), facecolor=bg_color)
+fig, ax = plt.subplots(figsize=(7, 4), facecolor=bg_color)
 ax.set_facecolor(bg_color)
 
 dreamy = patients_df[patients_df["doctor_name"] == "Doc Dreamy"]
 duck   = patients_df[patients_df["doctor_name"] == "Doc Duck"]
 
-for size, alpha in [(90, 0.9), (150, 0.15)]:
+for size, alpha in [(70, 0.9), (120, 0.15)]:
     ax.scatter(
         dreamy["severity"],
         dreamy["post_surgical_score"],
@@ -374,7 +383,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=dreamy_color,
         alpha=alpha,
-        label="Doc Dreamy" if size == 90 else None,
+        label="Doc Dreamy" if size == 70 else None,
         zorder=3,
     )
     ax.scatter(
@@ -386,7 +395,7 @@ for size, alpha in [(90, 0.9), (150, 0.15)]:
         linewidth=0.5,
         color=duck_color,
         alpha=alpha,
-        label="Doc Duck" if size == 90 else None,
+        label="Doc Duck" if size == 70 else None,
         zorder=3,
     )
 
@@ -397,7 +406,7 @@ mean_dreamy_obs = dreamy["post_surgical_score"].mean()
 mean_duck_obs   = duck["post_surgical_score"].mean()
 
 ax.axhline(mean_dreamy_obs, linestyle="--", color=dreamy_color, linewidth=2, alpha=0.9)
-ax.axhline(mean_duck_obs,   linestyle="--", color=duck_color,   linewidth=2, alpha=0.9)
+ax.axhline(mean_duck_obs,   linestyle="--", color=duck_color, linewidth=2, alpha=0.9)
 
 x_for_text = patients_df["severity"].max() - 0.5
 
@@ -406,7 +415,7 @@ ax.text(
     mean_dreamy_obs,
     f"○ Doc Dreamy mean = {mean_dreamy_obs:.2f}",
     color=dreamy_color,
-    fontsize=11,
+    fontsize=10,
     va="bottom",
     ha="right",
 )
@@ -415,14 +424,14 @@ ax.text(
     mean_duck_obs,
     f"△ Doc Duck mean = {mean_duck_obs:.2f}",
     color=duck_color,
-    fontsize=11,
+    fontsize=10,
     va="top",
     ha="right",
 )
 
-ax.set_xlabel("Initial patient severity", color="white", fontsize=12)
-ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=12)
-ax.set_title("Post-surgical symptom scores by initial severity – observational data", color="white", fontsize=14, pad=12)
+ax.set_xlabel("Initial patient severity", color="white", fontsize=11)
+ax.set_ylabel("Post-surgical symptom score (lower is better)", color="white", fontsize=11)
+ax.set_title("Post-surgical symptom scores by initial severity – observational data", color="white", fontsize=13, pad=10)
 
 ax.grid(True, linestyle=":", color=grid_color, alpha=0.6)
 ax.tick_params(colors="white")
@@ -459,7 +468,7 @@ summary_overlap = (
 style_summary(summary_overlap)
 ```
 
-Now the comparison is made for patients who started with similar severity. This reduces the bias from the common cause.
+Now the comparison is made for patients who started with similar severity. This reduces the bias from the common cause and gives a fairer comparison.
 
 Within this overlap band, Doc Duck often looks stronger than the raw overall averages suggest.
 
@@ -469,7 +478,7 @@ Within this overlap band, Doc Duck often looks stronger than the raw overall ave
 2. **Randomization breaks the path from severity to treatment.** In the randomized data, assignment no longer depends on severity, so the difference in averages reflects the effect of the surgeons more directly.
 3. **Stratification is a backup when randomization is not available.** Comparing outcomes within bands of severity helps control the common cause and gives a fairer comparison.
 
-The three figures and the summary tables together tell the story:
+The three figures and the summary tables together show:
 
 - How a hidden variable (severity) can tilt the numbers.
 - How randomization fixes the problem.
